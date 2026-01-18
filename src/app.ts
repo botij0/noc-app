@@ -1,9 +1,12 @@
-import server = require("./presentation/server");
+import "dotenv/config";
+
+import { Server } from "./presentation/server";
 
 (async () => {
   main();
 })();
 
 function main() {
-  server.Server.start();
+  console.log(process.env.PORT);
+  Server.start();
 }
