@@ -5,26 +5,32 @@ import { FileSystemDatasource } from "../infrastructure/datasources/File-system.
 import { envs } from "../config/plugins/envs.plugin";
 import { EmailService } from "./email/email.service";
 import { SendEmailLogs } from "../domain/user-cases/email/send-email-logs";
+import { MongoLogDatasource } from "../infrastructure/datasources/mongo-log.datasource";
+import { LogSeverityLevel } from "../domain/entities/log.entity";
 
-const fileSystemLogRepository = new LogRepositoryImpl(new FileSystemDatasource());
+const fsLogRepository = new LogRepositoryImpl(new FileSystemDatasource());
+const mongoLogRepository = new LogRepositoryImpl(new MongoLogDatasource());
 const emailService = new EmailService();
 
 export class Server {
-  public static start() {
+  public static async start() {
     console.log("Server started...");
 
-    new SendEmailLogs(emailService, fileSystemLogRepository).execute([
-      envs.MAILER_RECEIVER,
-    ]);
+    // new SendEmailLogs(emailService, fileSystemLogRepository).execute([
+    //   envs.MAILER_RECEIVER,
+    // ]);
     // emailService.sendEmailWithFileSystemLogs([envs.MAILER_RECEIVER]);
 
-    // CronService.createJob("*/5 * * * * *", () => {
-    //   const url = "https://google.com";
-    //   new CheckService(
-    //     fileSystemLogRepository,
-    //     () => console.log(`${url} is ok`),
-    //     (error) => console.log(error),
-    //   ).execute(url);
-    // });
+    const logs = await mongoLogRepository.getLogs(LogSeverityLevel.low);
+    console.log(logs);
+
+    CronService.createJob("*/5 * * * * *", () => {
+      const url = "https://google.com";
+      new CheckService(
+        mongoLogRepository,
+        () => console.log(`${url} is ok`),
+        (error) => console.log(error),
+      ).execute(url);
+    });
   }
 }
