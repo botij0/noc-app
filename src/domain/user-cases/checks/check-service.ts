@@ -1,5 +1,5 @@
-import { LogEntity, LogSeverityLevel } from "../../entities/log.entity";
 import { LogRepository } from "../../repository/log.repository";
+import { LogEntity, LogSeverityLevel } from "../../entities/log.entity";
 
 interface CheckServiceUseCase {
   execute(url: string): Promise<boolean>;
