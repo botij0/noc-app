@@ -7,11 +7,11 @@ logs/
 
 .env
 
-mongo/
-mongo-test/
+/mongo
+/mongo-test
 
-postgres/
-postgres-test/
+/postgres
+/postgres-test
 
 /src/generated/prisma
 /generated/prisma
